@@ -1,9 +1,10 @@
 import PyPDF2
 import re
+import sys
 
 
 def extract_emails_from_pdf(pdf_filename):
-    emails = []
+    emails = set()  # Utilizamos um conjunto para garantir e-mails únicos
 
     with open(pdf_filename, 'rb') as file:
         reader = PyPDF2.PdfReader(file)
@@ -13,12 +14,12 @@ def extract_emails_from_pdf(pdf_filename):
             lines = text.split("\n")
 
             for line in lines:
-                # Padrão para detectar um e-mail e removê-lo junto com qualquer texto após .com ou .com.br
                 match = re.search(r"([\w._%+-]+@[\w.-]+\.(com|com\.br))", line)
                 if match:
-                    emails.append(match.group(1))
+                    emails.add(match.group(1))  # Adiciona o e-mail ao conjunto
 
-    return emails
+    # Converte de volta para lista para manter o código restante consistente
+    return list(emails)
 
 
 def save_emails_to_txt(emails, txt_filename):
@@ -28,8 +29,13 @@ def save_emails_to_txt(emails, txt_filename):
 
 
 def main():
-    pdf_filename = input(
-        "Por favor, insira o caminho completo para o arquivo PDF: ")
+    if len(sys.argv) > 1:
+        # Pega o caminho do arquivo do argumento na linha de comando
+        pdf_filename = sys.argv[1]
+    else:
+        pdf_filename = input(
+            "Por favor, insira o caminho completo para o arquivo PDF: ")
+
     txt_filename = pdf_filename.rsplit('.', 1)[0] + '.txt'
 
     print(
