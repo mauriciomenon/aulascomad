@@ -3,12 +3,14 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 data = {
-    'Include': ['Seaborn', 'Matplotlib'],
-    'e_2': [1, 2]
+    'Hello World': ['Seaborn', 'Matplotlib'],
+    r'$\sigma^2$': [1.5, 2]  # LaTeX
 }
-
 df = pd.DataFrame(data)
 
-sns.barplot(x='Include', y='e_2', data=df)
-plt.title("Hello World")
+palette = {'Seaborn': 'blue', 'Matplotlib': 'red'}
+sns.barplot(x='Hello World', y=r'$\sigma^2$', data=df, palette=palette)
+plt.title(r"$\theta^2$")
+plt.ylabel(r"$\sigma^2$")
+
 plt.show()
