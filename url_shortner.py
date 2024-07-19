@@ -1,7 +1,7 @@
 import sys
 import pyshorteners
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QTableWidget, QTableWidgetItem
-from PyQt6.QtGui import QClipboard, QPalette, QColor
+from PyQt6.QtGui import QClipboard, QFont
 
 class URLShortenerApp(QWidget):
     def __init__(self):
@@ -24,8 +24,10 @@ class URLShortenerApp(QWidget):
         self.url_input = QLineEdit(self)
         self.url_input.setPlaceholderText("Enter the URL to shorten")
         self.url_input.setMinimumHeight(40)  # Aumentar a altura da entrada de URL
-        self.url_input.setStyleSheet("background-color: #f0f0f0;")
-        input_layout.addWidget(QLabel("Original URL:"))
+        self.url_input.setStyleSheet("background-color: #ffffff;")  # Fundo branco
+        input_label = QLabel("Original URL:")
+        input_label.setFixedWidth(100)
+        input_layout.addWidget(input_label)
         input_layout.addWidget(self.url_input)
         
         # Botão para encurtar URL
@@ -38,8 +40,10 @@ class URLShortenerApp(QWidget):
         self.short_url_output = QLineEdit(self)
         self.short_url_output.setReadOnly(True)
         self.short_url_output.setMinimumHeight(40)  # Aumentar a altura da saída de URL
-        self.short_url_output.setStyleSheet("background-color: #f0f0f0;")
-        result_layout.addWidget(QLabel("Shortened URL:"))
+        self.short_url_output.setStyleSheet("background-color: #ffffff;")  # Fundo branco
+        result_label = QLabel("Shortened URL:")
+        result_label.setFixedWidth(100)
+        result_layout.addWidget(result_label)
         result_layout.addWidget(self.short_url_output)
         
         # Botão para copiar URL encurtado
@@ -55,6 +59,7 @@ class URLShortenerApp(QWidget):
         self.history_table.horizontalHeader().setStretchLastSection(True)
         self.history_table.setColumnWidth(0, 400)  # Ajustar largura das colunas
         self.history_table.setColumnWidth(1, 400)
+        self.history_table.horizontalHeader().setStyleSheet("QHeaderView::section { background-color: #f0f0f0; }")  # Fundo cinza claro no cabeçalho
         
         # Adicionar layouts ao layout principal
         layout.addLayout(input_layout)
