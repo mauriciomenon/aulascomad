@@ -22,17 +22,17 @@ class URLShortenerApp(QWidget):
         
         # Campo de entrada para URL original
         self.url_input = QLineEdit(self)
-        self.url_input.setPlaceholderText("Enter the URL to shorten")
+        self.url_input.setPlaceholderText("Entre a URL a ser encurtada")
         self.url_input.setMinimumHeight(40)  # Aumentar a altura da entrada de URL
         self.url_input.setStyleSheet("background-color: #ffffff;")  # Fundo branco
         self.url_input.returnPressed.connect(self.shorten_url)  # Conectar a tecla Enter à função shorten_url
-        input_label = QLabel("Original URL:")
+        input_label = QLabel("URL Original:")
         input_label.setFixedWidth(100)
         input_layout.addWidget(input_label)
         input_layout.addWidget(self.url_input)
         
         # Botão para encurtar URL
-        shorten_button = QPushButton("Shorten", self)
+        shorten_button = QPushButton("Encurtar", self)
         shorten_button.clicked.connect(self.shorten_url)
         shorten_button.setMinimumHeight(40)  # Ajustar a altura do botão
         input_layout.addWidget(shorten_button)
@@ -42,21 +42,21 @@ class URLShortenerApp(QWidget):
         self.short_url_output.setReadOnly(True)
         self.short_url_output.setMinimumHeight(40)  # Aumentar a altura da saída de URL
         self.short_url_output.setStyleSheet("background-color: #ffffff;")  # Fundo branco
-        result_label = QLabel("Shortened URL:")
+        result_label = QLabel("URL Encurtada:")
         result_label.setFixedWidth(100)
         result_layout.addWidget(result_label)
         result_layout.addWidget(self.short_url_output)
         
         # Botão para copiar URL encurtado
-        copy_button = QPushButton("Copy", self)
+        copy_button = QPushButton("Copiar", self)
         copy_button.clicked.connect(self.copy_to_clipboard)
-        copy_button.setMinimumHeight(40)  # Ajustar a altura do botão
+        copy_button.setMinimumHeight(50)  # Ajustar a altura do botão
         result_layout.addWidget(copy_button)
         
         # Tabela para histórico
         self.history_table = QTableWidget(self)
         self.history_table.setColumnCount(2)
-        self.history_table.setHorizontalHeaderLabels(["Original URL", "Shortened URL"])
+        self.history_table.setHorizontalHeaderLabels(["URL Original", "URL Encurtada"])
         self.history_table.horizontalHeader().setStretchLastSection(True)
         self.history_table.setColumnWidth(0, 400)  # Ajustar largura das colunas
         self.history_table.setColumnWidth(1, 400)
@@ -65,7 +65,7 @@ class URLShortenerApp(QWidget):
         # Adicionar layouts ao layout principal
         layout.addLayout(input_layout)
         layout.addLayout(result_layout)
-        layout.addWidget(QLabel("History:"))
+        layout.addWidget(QLabel("Histórico:"))
         layout.addWidget(self.history_table)
         
         # Configurar layout principal
@@ -156,7 +156,7 @@ class URLShortenerApp(QWidget):
     def show_about_dialog(self):
         about_msg = QMessageBox(self)
         about_msg.setWindowTitle("About")
-        about_msg.setText("URL Shortener\n\nAuthor: Seu Nome\nVersion: 1.0")
+        about_msg.setText("URL Shortener\n\nAutor: Maurício Menon (+AI)\nVersão: 1.7")
         about_msg.setGeometry(50, 50, 150, 100)  # Ainda menor e exibida ao lado esquerdo
         about_msg.exec()
         
@@ -165,7 +165,7 @@ class URLShortenerApp(QWidget):
             current_datetime = QDateTime.currentDateTime().toString("dd-MM-yyyy HH:mm:ss")
             self.datetime_label.setText(current_datetime)
         except Exception as e:
-            print(f"Error updating datetime: {e}")
+            print(f"Erro atualizando data/hora: {e}")
 
 def main():
     app = QApplication(sys.argv)
