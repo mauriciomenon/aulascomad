@@ -50,7 +50,7 @@ class URLShortenerApp(QWidget):
         # Botão para copiar URL encurtado
         copy_button = QPushButton("Copiar", self)
         copy_button.clicked.connect(self.copy_to_clipboard)
-        copy_button.setMinimumHeight(50)  # Ajustar a altura do botão
+        copy_button.setMinimumHeight(40)  # Ajustar a altura do botão
         result_layout.addWidget(copy_button)
         
         # Tabela para histórico
@@ -85,6 +85,7 @@ class URLShortenerApp(QWidget):
         footer_layout = QHBoxLayout()
         about_button = QPushButton("About", self)
         about_button.clicked.connect(self.show_about_dialog)
+        about_button.setMinimumHeight(20)  # Reduzir o tamanho do botão About
         footer_layout.addWidget(about_button)
         
         self.datetime_label = QLabel(self)
@@ -127,15 +128,19 @@ class URLShortenerApp(QWidget):
         
     def show_context_menu(self, position):
         menu = QMenu()
-        copy_action = menu.addAction("Copy")
+        copy_action = menu.addAction("Copiar")
+        paste_action = menu.addAction("Colar")
         action = menu.exec(self.url_input.mapToGlobal(position))
         if action == copy_action:
             clipboard = QApplication.clipboard()
             clipboard.setText(self.url_input.text() if self.focusWidget() == self.url_input else self.short_url_output.text())
+        elif action == paste_action:
+            clipboard = QApplication.clipboard()
+            self.url_input.setText(clipboard.text())
             
     def show_context_menu_history(self, position):
         menu = QMenu()
-        copy_action = menu.addAction("Copy")
+        copy_action = menu.addAction("Copiar")
         action = menu.exec(self.history_table.mapToGlobal(position))
         if action == copy_action:
             selected_items = self.history_table.selectedItems()
