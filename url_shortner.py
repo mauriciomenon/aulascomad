@@ -1,7 +1,7 @@
 import sys
 import pyshorteners
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QTableWidget, QTableWidgetItem, QHeaderView, QMenu, QMessageBox
-from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtCore import Qt, QTimer, QDateTime
 
 class URLShortenerApp(QWidget):
     def __init__(self):
@@ -81,10 +81,22 @@ class URLShortenerApp(QWidget):
         self.history_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.history_table.customContextMenuRequested.connect(self.show_context_menu_history)
         
-        # Adicionar menu About
+        # Adicionar menu About e data/hora
+        footer_layout = QHBoxLayout()
         about_button = QPushButton("About", self)
         about_button.clicked.connect(self.show_about_dialog)
-        layout.addWidget(about_button)
+        footer_layout.addWidget(about_button)
+        
+        self.datetime_label = QLabel(self)
+        self.datetime_label.setAlignment(Qt.AlignmentFlag.AlignRight)
+        footer_layout.addWidget(self.datetime_label)
+        
+        layout.addLayout(footer_layout)
+        
+        # Atualizar data e hora a cada segundo
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_datetime)
+        self.timer.start(1000)
         
     def shorten_url(self):
         long_url = self.url_input.text()
@@ -133,7 +145,7 @@ class URLShortenerApp(QWidget):
                 
     def show_temporary_message(self, message, timeout=2000):
         self.temp_message = QLabel(message, self)
-        self.temp_message.setStyleSheet("background-color: yellow; border: 1px solid black;")
+        self.temp_message.setStyleSheet("background-color: #d3d3d3; border: 1px solid black;")  # Tom de cinza
         self.temp_message.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.temp_message.setFixedSize(200, 50)
         self.temp_message.move((self.width() - self.temp_message.width()) // 2, (self.height() - self.temp_message.height()) // 2)
@@ -145,7 +157,15 @@ class URLShortenerApp(QWidget):
         about_msg = QMessageBox(self)
         about_msg.setWindowTitle("About")
         about_msg.setText("URL Shortener\n\nAuthor: Seu Nome\nVersion: 1.0")
+        about_msg.setGeometry(50, 50, 150, 100)  # Ainda menor e exibida ao lado esquerdo
         about_msg.exec()
+        
+    def update_datetime(self):
+        try:
+            current_datetime = QDateTime.currentDateTime().toString("dd-MM-yyyy HH:mm:ss")
+            self.datetime_label.setText(current_datetime)
+        except Exception as e:
+            print(f"Error updating datetime: {e}")
 
 def main():
     app = QApplication(sys.argv)
