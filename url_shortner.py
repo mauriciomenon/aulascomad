@@ -1,7 +1,7 @@
 import sys
 import pyshorteners
-from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QTableWidget, QTableWidgetItem
-from PyQt6.QtGui import QClipboard, QFont
+from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QTableWidget, QTableWidgetItem, QHeaderView, QMenu
+from PyQt6.QtCore import Qt
 
 class URLShortenerApp(QWidget):
     def __init__(self):
@@ -25,6 +25,7 @@ class URLShortenerApp(QWidget):
         self.url_input.setPlaceholderText("Enter the URL to shorten")
         self.url_input.setMinimumHeight(40)  # Aumentar a altura da entrada de URL
         self.url_input.setStyleSheet("background-color: #ffffff;")  # Fundo branco
+        self.url_input.returnPressed.connect(self.shorten_url)  # Conectar a tecla Enter à função shorten_url
         input_label = QLabel("Original URL:")
         input_label.setFixedWidth(100)
         input_layout.addWidget(input_label)
@@ -70,6 +71,16 @@ class URLShortenerApp(QWidget):
         # Configurar layout principal
         self.setLayout(layout)
         
+        # Menu de contexto para copiar texto
+        self.url_input.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.url_input.customContextMenuRequested.connect(self.show_context_menu)
+        
+        self.short_url_output.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.short_url_output.customContextMenuRequested.connect(self.show_context_menu)
+        
+        self.history_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.history_table.customContextMenuRequested.connect(self.show_context_menu_history)
+        
     def shorten_url(self):
         long_url = self.url_input.text()
         short_url = self.get_short_url(long_url)
@@ -92,6 +103,24 @@ class URLShortenerApp(QWidget):
     def copy_to_clipboard(self):
         clipboard = QApplication.clipboard()
         clipboard.setText(self.short_url_output.text())
+        
+    def show_context_menu(self, position):
+        menu = QMenu()
+        copy_action = menu.addAction("Copy")
+        action = menu.exec(self.url_input.mapToGlobal(position))
+        if action == copy_action:
+            clipboard = QApplication.clipboard()
+            clipboard.setText(self.url_input.text() if self.focusWidget() == self.url_input else self.short_url_output.text())
+            
+    def show_context_menu_history(self, position):
+        menu = QMenu()
+        copy_action = menu.addAction("Copy")
+        action = menu.exec(self.history_table.mapToGlobal(position))
+        if action == copy_action:
+            selected_items = self.history_table.selectedItems()
+            if selected_items:
+                clipboard = QApplication.clipboard()
+                clipboard.setText(selected_items[0].text())
         
 def main():
     app = QApplication(sys.argv)
