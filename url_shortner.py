@@ -1,7 +1,7 @@
 import sys
 import pyshorteners
-from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QTableWidget, QTableWidgetItem, QHeaderView, QMenu
-from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QTableWidget, QTableWidgetItem, QHeaderView, QMenu, QMessageBox
+from PyQt6.QtCore import Qt, QTimer
 
 class URLShortenerApp(QWidget):
     def __init__(self):
@@ -81,10 +81,19 @@ class URLShortenerApp(QWidget):
         self.history_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.history_table.customContextMenuRequested.connect(self.show_context_menu_history)
         
+        # Adicionar menu About
+        about_button = QPushButton("About", self)
+        about_button.clicked.connect(self.show_about_dialog)
+        layout.addWidget(about_button)
+        
     def shorten_url(self):
         long_url = self.url_input.text()
+        self.show_temporary_message("Encurtando...")
         short_url = self.get_short_url(long_url)
         self.short_url_output.setText(short_url)
+        
+        # Copiar automaticamente para a área de transferência
+        self.copy_to_clipboard()
         
         # Atualizar histórico
         row_position = self.history_table.rowCount()
@@ -121,7 +130,23 @@ class URLShortenerApp(QWidget):
             if selected_items:
                 clipboard = QApplication.clipboard()
                 clipboard.setText(selected_items[0].text())
+                
+    def show_temporary_message(self, message, timeout=2000):
+        self.temp_message = QLabel(message, self)
+        self.temp_message.setStyleSheet("background-color: yellow; border: 1px solid black;")
+        self.temp_message.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.temp_message.setFixedSize(200, 50)
+        self.temp_message.move((self.width() - self.temp_message.width()) // 2, (self.height() - self.temp_message.height()) // 2)
+        self.temp_message.show()
         
+        QTimer.singleShot(timeout, self.temp_message.close)
+        
+    def show_about_dialog(self):
+        about_msg = QMessageBox(self)
+        about_msg.setWindowTitle("About")
+        about_msg.setText("URL Shortener\n\nAuthor: Seu Nome\nVersion: 1.0")
+        about_msg.exec()
+
 def main():
     app = QApplication(sys.argv)
     window = URLShortenerApp()
