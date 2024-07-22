@@ -1,3 +1,4 @@
+# Mauricio Menon (+AI) 22072024
 import sys
 import pyshorteners
 import pyshorteners.shorteners
