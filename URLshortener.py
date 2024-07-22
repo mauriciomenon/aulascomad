@@ -1,5 +1,7 @@
 import sys
 import pyshorteners
+import pyshorteners.shorteners
+import pyshorteners.shorteners.tinyurl 
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QTableWidget, QTableWidgetItem, QHeaderView, QMenu, QMessageBox
 from PyQt6.QtCore import Qt, QTimer, QDateTime
 
