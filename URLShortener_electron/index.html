@@ -12,8 +12,13 @@
         }
 
         .container {
-            max-width: 600px;
+            max-width: 800px;
             margin: auto;
+        }
+
+        #urlInput {
+            width: 120%;
+            margin-left: -10%;
         }
 
         .btn {
@@ -22,6 +27,17 @@
 
         .history {
             margin-top: 20px;
+            text-align: center;
+        }
+
+        .history-table-container {
+            width: 120%;
+            margin-left: -10%;
+        }
+
+        .history table {
+            font-size: 0.9em;
+            margin: auto;
         }
     </style>
 </head>
@@ -31,50 +47,55 @@
         <h1 class="text-center">URL Shortener</h1>
         <input type="text" id="urlInput" class="form-control mb-3" placeholder="Enter the URL to shorten">
         <button id="shortenButton" class="btn btn-primary w-100">Shorten</button>
-        <p id="result" class="mt-3"></p>
-        <button id="copyButton" class="btn btn-secondary w-100">Copy</button>
+        <div class="result mt-3">
+            <label for="short-url">Shortened URL:</label>
+            <input type="text" class="form-control" id="short-url" readonly>
+        </div>
+        <button id="copyButton" class="btn btn-secondary w-100 mt-3">Copy</button>
         <div class="history mt-5">
             <h2>History</h2>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Original URL</th>
-                        <th>Shortened URL</th>
-                    </tr>
-                </thead>
-                <tbody id="historyTable">
-                    <!-- History items will be added here -->
-                </tbody>
-            </table>
+            <div class="history-table-container">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Original URL</th>
+                            <th>Shortened URL</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTable">
+                        <!-- History items will be added here -->
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <script>
         const urlInput = document.getElementById('urlInput');
         const shortenButton = document.getElementById('shortenButton');
-        const result = document.getElementById('result');
+        const shortUrl = document.getElementById('short-url');
         const copyButton = document.getElementById('copyButton');
         const historyTable = document.getElementById('historyTable');
 
         shortenButton.addEventListener('click', async () => {
             const url = urlInput.value;
             if (url) {
-                result.innerText = 'Shortening...';
+                shortUrl.value = 'Shortening...';
                 console.log('URL antes de enviar para encurtar:', url); // Depuração
-                const shortUrl = await window.electronAPI.shortenUrl(url);
-                console.log('URL encurtada recebida:', shortUrl); // Depuração
-                result.innerText = `Shortened URL: ${shortUrl}`;
-                addToHistory(url, shortUrl);
+                const shortUrlValue = await window.electronAPI.shortenUrl(url);
+                console.log('URL encurtada recebida:', shortUrlValue); // Depuração
+                shortUrl.value = shortUrlValue;
+                addToHistory(url, shortUrlValue);
             } else {
-                result.innerText = 'Please enter a URL';
+                shortUrl.value = 'Please enter a URL';
             }
         });
 
         copyButton.addEventListener('click', () => {
-            const shortUrl = result.innerText.split(': ')[1];
-            if (shortUrl) {
-                window.electronAPI.copyToClipboard(shortUrl);
-                result.innerText += ' (Copied to clipboard)';
+            const shortUrlValue = shortUrl.value;
+            if (shortUrlValue) {
+                window.electronAPI.copyToClipboard(shortUrlValue);
+                shortUrl.value += ' (Copied to clipboard)';
             }
         });
 
