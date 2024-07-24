@@ -8,7 +8,7 @@ function createWindow() {
     height: 600,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
-      contextIsolation: false,
+      contextIsolation: true,
       nodeIntegration: true,
     },
   });
@@ -31,20 +31,22 @@ app.on('activate', () => {
 });
 
 ipcMain.handle('shorten-url', async (event, url) => {
+  console.log('URL recebida para encurtar:', url);
   try {
     const response = await axios.post('https://api.tinyurl.com/create', {
-      url,
+      url: url,
       domain: 'tiny.one',
       alias: '',
     }, {
       headers: {
-        Authorization: 'Bearer YOUR_API_KEY',  // Substitua 'YOUR_API_KEY' pela sua chave de API
+        Authorization: 'Bearer ruKTbLMkz92YkCftr6l3Bf4Y0MYQFNXb8pQHSREXMMvRGr0lRiQNBWmMvhgN',
         'Content-Type': 'application/json'
       }
     });
+    console.log('Resposta da API:', response.data);
     return response.data.data.tiny_url;
   } catch (error) {
-    console.error(error);
+    console.error('Erro ao encurtar URL:', error);
     return `Error: ${error.message}`;
   }
 });

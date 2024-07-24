@@ -1,98 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>URL Shortener</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-    }
-    #container {
-      width: 50%;
-    }
-    input, button {
-      width: 100%;
-      padding: 10px;
-      margin: 5px 0;
-    }
-    button {
-      cursor: pointer;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    th, td {
-      padding: 10px;
-      border: 1px solid #ccc;
-      text-align: left;
-    }
-    th {
-      background-color: #f0f0f0;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #container {
+            width: 50%;
+        }
+
+        input,
+        button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+    </style>
 </head>
+
 <body>
-  <div id="container">
-    <h1>URL Shortener</h1>
-    <input type="text" id="urlInput" placeholder="Enter the URL to shorten">
-    <button id="shortenButton">Shorten</button>
-    <p id="result"></p>
-    <button id="copyButton">Copy</button>
-    <h2>History</h2>
-    <table id="historyTable">
-      <thead>
-        <tr>
-          <th>Original URL</th>
-          <th>Shortened URL</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-  <script>
-    const urlInput = document.getElementById('urlInput');
-    const shortenButton = document.getElementById('shortenButton');
-    const result = document.getElementById('result');
-    const copyButton = document.getElementById('copyButton');
-    const historyTable = document.getElementById('historyTable').getElementsByTagName('tbody')[0];
+    <div id="container">
+        <h1>URL Shortener</h1>
+        <input type="text" id="urlInput" placeholder="Enter the URL to shorten">
+        <button id="shortenButton">Shorten</button>
+        <p id="result"></p>
+        <button id="copyButton">Copy</button>
+        <h2>History</h2>
+        <table id="historyTable">
+            <thead>
+                <tr>
+                    <th>Original URL</th>
+                    <th>Shortened URL</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <script>
+        const urlInput = document.getElementById('urlInput');
+        const shortenButton = document.getElementById('shortenButton');
+        const result = document.getElementById('result');
+        const copyButton = document.getElementById('copyButton');
+        const historyTable = document.getElementById('historyTable').getElementsByTagName('tbody')[0];
 
-    shortenButton.addEventListener('click', async () => {
-      const url = urlInput.value;
-      if (url) {
-        result.innerText = 'Shortening...';
-        const shortUrl = await window.electronAPI.shortenUrl(url);
-        result.innerText = `Shortened URL: ${shortUrl}`;
-        addToHistory(url, shortUrl);
-      } else {
-        result.innerText = 'Please enter a URL';
-      }
-    });
+        shortenButton.addEventListener('click', async () => {
+            const url = urlInput.value;
+            if (url) {
+                result.innerText = 'Shortening...';
+                console.log('URL antes de enviar para encurtar:', url); // Depuração
+                const shortUrl = await window.electronAPI.shortenUrl(url);
+                console.log('URL encurtada recebida:', shortUrl); // Depuração
+                result.innerText = `Shortened URL: ${shortUrl}`;
+                addToHistory(url, shortUrl);
+            } else {
+                result.innerText = 'Please enter a URL';
+            }
+        });
 
-    copyButton.addEventListener('click', () => {
-      const shortUrl = result.innerText.split(': ')[1];
-      if (shortUrl) {
-        window.electronAPI.copyToClipboard(shortUrl);
-        result.innerText += ' (Copied to clipboard)';
-      }
-    });
+        copyButton.addEventListener('click', () => {
+            const shortUrl = result.innerText.split(': ')[1];
+            if (shortUrl) {
+                window.electronAPI.copyToClipboard(shortUrl);
+                result.innerText += ' (Copied to clipboard)';
+            }
+        });
 
-    function addToHistory(original, shortened) {
-      const row = historyTable.insertRow();
-      const originalCell = row.insertCell(0);
-      const shortenedCell = row.insertCell(1);
+        function addToHistory(original, shortened) {
+            const row = historyTable.insertRow();
+            const originalCell = row.insertCell(0);
+            const shortenedCell = row.insertCell(1);
 
-      originalCell.innerText = original;
-      shortenedCell.innerText = shortened;
-    }
-  </script>
+            originalCell.innerText = original;
+            shortenedCell.innerText = shortened;
+        }
+    </script>
 </body>
+
 </html>
